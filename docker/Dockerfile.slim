@@ -1,0 +1,19 @@
+# slim image for components that never run probes: fetcher, coordinator, api.
+FROM golang:1.23.12-alpine AS build
+ARG TARGETBIN=api
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags "-s -w" \
+      -o /out/fetcher ./cmd/fetcher && \
+    CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags "-s -w" \
+      -o /out/coordinator ./cmd/coordinator && \
+    CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags "-s -w" \
+      -o /out/api ./cmd/api
+FROM gcr.io/distroless/static-debian12:nonroot
+ARG TARGETBIN=api
+COPY --from=build --chown=root:root --chmod=0755 /out/${TARGETBIN} /proxyfarm
+COPY web /web
+USER nonroot:nonroot
+ENTRYPOINT ["/proxyfarm"]

@@ -1,0 +1,138 @@
+# M1 local run without k8s (T-014): full pipeline → publication v1.
+#   docker compose -f deploy/compose/docker-compose.yml up -d --build
+#   docker compose -f deploy/compose/docker-compose.yml run --rm fetcher
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: proxyfarm
+      POSTGRES_PASSWORD: proxyfarm
+      POSTGRES_DB: proxyfarm
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proxyfarm"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    volumes:
+      - nats-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://127.0.0.1:8222/healthz || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "127.0.0.1:4222:4222"
+
+  coordinator:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.slim
+      args: {TARGETBIN: coordinator}
+    command:
+      - --nats=nats://nats:4222
+      - --pg=postgres://proxyfarm:proxyfarm@postgres:5432/proxyfarm?sslmode=disable
+      - --plan-every=15s
+      - --publish-every=6h
+    environment:
+      HOSTNAME: coordinator-1
+    depends_on:
+      postgres: {condition: service_healthy}
+      nats: {condition: service_healthy}
+    restart: unless-stopped
+
+  # one-shot: migrate schema + seed sources, then run the coordinator loop
+  migrate:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.slim
+      args: {TARGETBIN: coordinator}
+    command:
+      - --nats=nats://nats:4222
+      - --pg=postgres://proxyfarm:proxyfarm@postgres:5432/proxyfarm?sslmode=disable
+      - --migrate
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: "no"
+
+  seed:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.slim
+      args: {TARGETBIN: coordinator}
+    command:
+      - --nats=nats://nats:4222
+      - --pg=postgres://proxyfarm:proxyfarm@postgres:5432/proxyfarm?sslmode=disable
+      - --seed-sql=/seed/subs_seed.sql
+    volumes:
+      - ../../fixtures/subs_seed.sql:/seed/subs_seed.sql:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile
+      args: {TARGETBIN: worker}
+    command:
+      - --role=tester
+      - --vantage=cloud-eu-1
+      - --nats=nats://nats:4222
+    environment:
+      PROBE_CONCURRENCY: "32"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres: {condition: service_healthy}
+      nats: {condition: service_healthy}
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+
+  api:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.slim
+      args: {TARGETBIN: api}
+    command:
+      - --addr=:8080
+      - --nats=nats://nats:4222
+      - --pg=postgres://proxyfarm:proxyfarm@postgres:5432/proxyfarm?sslmode=disable
+      - --web-dir=/web
+    environment:
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      postgres: {condition: service_healthy}
+      nats: {condition: service_healthy}
+    restart: unless-stopped
+
+  fetcher:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.slim
+      args: {TARGETBIN: fetcher}
+    command:
+      - --once
+      - --nats=nats://nats:4222
+      - --pg=postgres://proxyfarm:proxyfarm@postgres:5432/proxyfarm?sslmode=disable
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    restart: "no"
+
+volumes:
+  pg-data:
+  nats-data:
