@@ -163,7 +163,7 @@ publishes(version, created_at, class_filter, node_count, checksum, kv_key)
 
 Ретеншн: `node_checks` — партиционирование по месяцу, сырые проверки храним 30 дней (агрегаты в `nodes` живут вечно); JetStream limits — 1–5 ГБ на стрим.
 
-Гео: **локальный MaxMind GeoLite2 mmdb** в coordinator (правка: не ip-api.com — у него rate-limit 100 req/min и внешняя зависимость; mmdb офлайн и быстрый). Обновление mmdb — CronJob `geoipupdate` (бесплатный license key).
+Гео: **локальный DB-IP City Lite mmdb** в coordinator (MMDB-формат, читается тем же ридером что GeoLite2; ключей и регистрации не требует; лицензия CC-BY — attribution в футере карты). Обновление mmdb — CronJob `dbip-update` (прямая ссылка `download.db-ip.com/free/dbip-city-lite-YYYY-MM.mmdb.gz`, фолбэк на прошлый месяц). MaxMind GeoLite2 остаётся drop-in альтернативой без правок кода.
 
 ---
 
@@ -255,6 +255,7 @@ Rate limit: nginx ingress `limit-rps` на /api/*; статика без лим�
 | 8 | HPA/KEDA на single-node | ✅ оставить в манифестах, min=max до появления второй ноды |
 | 9 | Доступ «для коммьюнити» | ✅ публичный read-only + rate limit; безопасность инфраструктуры ≠ регистрация пользователей |
 | 10 | Карта всех найденных | ✅ исправлено по решению: только прошедшие L1 (+класс cloud/rf) |
+| 11 | MaxMind (нужен аккаунт + license key) | ✅ заменён: DB-IP City Lite — без ключей и регистрации, тот же MMDB-ридер, CC-BY attribution в футере |
 
 ---
 

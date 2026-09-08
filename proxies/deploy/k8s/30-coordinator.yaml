@@ -26,6 +26,8 @@ spec:
           envFrom:
             - configMapRef: {name: proxyfarm-config}
             - secretRef: {name: proxyfarm-secrets}
+          env:
+            - {name: MMDB_PATH, value: /geo/dbip-city-lite.mmdb}
           ports: [{containerPort: 9102, name: metrics}]
           readinessProbe:
             httpGet: {path: /metrics, port: metrics}
@@ -40,9 +42,12 @@ spec:
             limits: {memory: 512Mi}
           volumeMounts:
             - {name: tmp, mountPath: /tmp}
+            - {name: mmdb, mountPath: /geo, readOnly: true}
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: mmdb
+          persistentVolumeClaim: {claimName: mmdb}
 ---
 apiVersion: v1
 kind: Service

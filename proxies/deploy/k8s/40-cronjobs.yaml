@@ -36,11 +36,12 @@ spec:
                 requests: {cpu: 50m, memory: 64Mi}
                 limits: {memory: 256Mi}
 ---
-# geoipupdate CronJob: refresh GeoLite2 mmdb (free license key, §6).
+# db-ip CronJob: refresh the City Lite mmdb (§6 — no keys, no signup).
+# Tries the current month first, falls back to the previous one.
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: geoipupdate
+  name: dbip-update
   namespace: proxyfarm
 spec:
   schedule: "17 3 * * 3" # weekly
@@ -51,18 +52,26 @@ spec:
         spec:
           restartPolicy: Never
           containers:
-            - name: geoipupdate
-              image: ghcr.io/maxmind/geoipupdate:v7.1.0
-              env:
-                - {name: GEOIPUPDATE_EDITION_IDS, value: "GeoLite2-City"}
-                - {name: GEOIPUPDATE_FREQUENCY, value: "0"}
-                - {name: GEOIPUPDATE_VERBOSE, value: "1"}
-                - name: GEOIPUPDATE_ACCOUNT_ID
-                  valueFrom: {secretKeyRef: {name: proxyfarm-secrets, key: GEOIP_ACCOUNT_ID}}
-                - name: GEOIPUPDATE_LICENSE_KEY
-                  valueFrom: {secretKeyRef: {name: proxyfarm-secrets, key: GEOIP_LICENSE_KEY}}
+            - name: dbip-update
+              image: alpine:3.20
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  apk add --no-cache curl gzip
+                  for M in $(date +%Y-%m) $(date -d '1 month ago' +%Y-%m); do
+                    URL="https://download.db-ip.com/free/dbip-city-lite-${M}.mmdb.gz"
+                    echo "trying $URL"
+                    if curl -sfL -o /data/dbip-city-lite.mmdb.gz "$URL"; then
+                      gunzip -f /data/dbip-city-lite.mmdb.gz
+                      echo "mmdb updated from $M"
+                      exit 0
+                    fi
+                  done
+                  echo "no db-ip file available" >&2
+                  exit 1
               volumeMounts:
-                - {name: mmdb, mountPath: /usr/share/GeoIP}
+                - {name: mmdb, mountPath: /data}
           volumes:
             - name: mmdb
               persistentVolumeClaim: {claimName: mmdb}
