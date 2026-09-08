@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProxyFarm — verified proxy nodes</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="sidebar">
+    <h1>Proxy<span class="accent">Farm</span></h1>
+    <div class="tagline">community-checked proxy nodes</div>
+
+    <div class="controls">
+      <label><input type="radio" name="class" value="rf" checked> <span class="dot rf"></span> rf — verified from RU home</label>
+      <label><input type="radio" name="class" value="cloud"> <span class="dot cloud"></span> cloud — verified from VPS</label>
+    </div>
+
+    <div class="controls proto">
+      <select id="proto">
+        <option value="">all protocols</option>
+        <option>vless</option><option>vmess</option><option>trojan</option>
+        <option>ss</option><option>hysteria2</option><option>anytls</option><option>socks</option>
+      </select>
+    </div>
+
+    <div id="city-panel" class="panel hidden">
+      <h2 id="city-name"></h2>
+      <div id="node-list"></div>
+    </div>
+
+    <div class="footer">
+      <div id="stats"></div>
+      <div class="subs">
+        <span>subscription (v2rayN/NG):</span>
+        <div class="subrow">
+          <code id="sub-url">/api/sub?class=rf</code>
+          <button id="copy-sub" title="copy subscription URL">copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
