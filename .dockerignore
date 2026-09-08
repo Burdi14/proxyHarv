@@ -1,0 +1,9 @@
+.git
+bin/
+scratches/
+*.mmdb
+*.log
+.opencode/
+token
+.token
+deploy/k8s/secrets.yaml

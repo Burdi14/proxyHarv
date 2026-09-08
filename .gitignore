@@ -1,0 +1,15 @@
+bin/
+*.mmdb
+*.log
+.env
+token
+.token
+deploy/k8s/secrets.yaml
+.idea/
+
+# built binaries dropped in repo root by bare `go build`
+/api
+/worker
+/fetcher
+/coordinator
+paused.conf
