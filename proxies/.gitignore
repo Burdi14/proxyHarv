@@ -1,0 +1,18 @@
+bin/
+*.mmdb
+*.log
+.env
+token
+.token
+deploy/k8s/secrets.yaml
+.idea/
+
+# built binaries dropped in repo root by bare `go build`
+/api
+/worker
+/fetcher
+/coordinator
+paused.conf
+
+# exception: tiny test fixture (22K) required by internal/geo tests
+!internal/geo/testdata/*.mmdb
