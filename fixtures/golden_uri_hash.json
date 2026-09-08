@@ -1,0 +1,115 @@
+{
+ "_comment": "golden canonicalization + uri_hash per ARCHITECTURE.md §14. uri_hash = \"sha256:\"+hex(sha256(canonical))",
+ "cases": [
+  {
+   "uri": "vless://eea1090b-71a9-42df-a617-c6c4ba5bc3d4@65.109.208.236:26795?security=none&type=tcp&packetEncoding=xudp&encryption=none#%F0%9F%87%AB%F0%9F%87%AEFI_25%7C329KB%2Fs%7CB007-260618%2001",
+   "canonical": "vless://eea1090b-71a9-42df-a617-c6c4ba5bc3d4@65.109.208.236:26795?encryption=none&packetEncoding=xudp&security=none&type=tcp",
+   "uri_hash": "sha256:f7e24eee27b1716b105d19682c2e4689e5bb016775fccbe428ab61c476b43977"
+  },
+  {
+   "uri": "vless://47fcef29-ab4e-4aa6-932b-d95a18f28a4e@166.62.111.8:443?security=tls&type=ws&path=/&host=gj2rf.mlrb.tyr.hh.vavava.kdns.fr&packetEncoding=xudp&sni=gj2rf.mlrb.tyr.hh.vavava.kdns.fr&fp=chrome#%F0%9F%87%AB%F0%9F%87%B7FR_1281%7C265KB%2Fs%7CA004-260618%2001",
+   "canonical": "vless://47fcef29-ab4e-4aa6-932b-d95a18f28a4e@166.62.111.8:443?fp=chrome&host=gj2rf.mlrb.tyr.hh.vavava.kdns.fr&packetEncoding=xudp&path=/&security=tls&sni=gj2rf.mlrb.tyr.hh.vavava.kdns.fr&type=ws",
+   "uri_hash": "sha256:4c71364217e4a2c562f22d5ddbe357594945646ec9295881d1bb21ba09b3e3c8"
+  },
+  {
+   "uri": "vless://d51ed55c-d6dd-400b-aaf6-017c33969bfe@47.89.186.170:55861?security=reality&type=tcp&packetEncoding=xudp&sni=www.intel.com&fp=firefox&flow=xtls-rprx-vision&sid=7551ed1b&pbk=t2ndf6SeVxinFCo5bcemnW_ZZhAtmHWiAkllks5qPWs&encryption=none#%F0%9F%87%BA%F0%9F%87%B8US_235%7C135KB%2Fs%7CA003-260618%2001",
+   "canonical": "vless://d51ed55c-d6dd-400b-aaf6-017c33969bfe@47.89.186.170:55861?encryption=none&flow=xtls-rprx-vision&fp=firefox&packetEncoding=xudp&pbk=t2ndf6SeVxinFCo5bcemnW_ZZhAtmHWiAkllks5qPWs&security=reality&sid=7551ed1b&sni=www.intel.com&type=tcp",
+   "uri_hash": "sha256:98b9ee78ac85fb5c311e5a52481bece739ccb0cfb6b215c57b4048db26c172c4"
+  },
+  {
+   "uri": "vless://fb2a0834-e482-472c-99f3-6c3e7e6e539e@84.32.44.232:15084?security=tls&type=ws&path=/@Marisa_kristi&host=8n9qi6t-owl.gevc9s4n60cc3wzcmwhjyezydpmbchocxp.workers.dev&packetEncoding=xudp&sni=8n9qi6t-owl.gevc9s4n60cc3wzcmwhjyezydpmbchocxp.workers.dev&fp=chrome&encryption=none#%F0%9F%87%BA%F0%9F%87%B8US_6%7C251KB%2Fs%2001",
+   "canonical": "vless://fb2a0834-e482-472c-99f3-6c3e7e6e539e@84.32.44.232:15084?encryption=none&fp=chrome&host=8n9qi6t-owl.gevc9s4n60cc3wzcmwhjyezydpmbchocxp.workers.dev&packetEncoding=xudp&path=/@Marisa_kristi&security=tls&sni=8n9qi6t-owl.gevc9s4n60cc3wzcmwhjyezydpmbchocxp.workers.dev&type=ws",
+   "uri_hash": "sha256:6a964a78a963a09275c2ff674c68f0c44d2187ee880892f01324fb45a1b12f5b"
+  },
+  {
+   "uri": "vless://4706d9c3-eec0-4666-9d84-e608a200e872@194.226.169.36:443?security=reality&type=tcp&packetEncoding=xudp&sni=yahoo.com&fp=chrome&sid=b8aa&pbk=i4Mx_tDND0Xxac3WyA7HgT9rvXdZlXpm5m1EGiQF-Uk&encryption=none#%F0%9F%87%AB%F0%9F%87%B7FR_418%7C268KB%2Fs%7CC002-260622%2001",
+   "canonical": "vless://4706d9c3-eec0-4666-9d84-e608a200e872@194.226.169.36:443?encryption=none&fp=chrome&packetEncoding=xudp&pbk=i4Mx_tDND0Xxac3WyA7HgT9rvXdZlXpm5m1EGiQF-Uk&security=reality&sid=b8aa&sni=yahoo.com&type=tcp",
+   "uri_hash": "sha256:89622c546ac5cd456a80c34f18e56ea720e7039d2cfc49f8cfa456109cc74e74"
+  },
+  {
+   "uri": "vless://00dda8ac-c263-4106-a740-1e4478a7dc44@31.58.50.200:8443?security=reality&type=tcp&packetEncoding=xudp&sni=tradingview.com&fp=firefox&flow=xtls-rprx-vision&pbk=mr5AF0LFyDzYDRoYAwH6QNcHXL77-LoiwRx50ZzU8QU#%F0%9F%87%BA%F0%9F%87%B8US_400%7C221KB%2Fs%7CA004-260618%2001",
+   "canonical": "vless://00dda8ac-c263-4106-a740-1e4478a7dc44@31.58.50.200:8443?flow=xtls-rprx-vision&fp=firefox&packetEncoding=xudp&pbk=mr5AF0LFyDzYDRoYAwH6QNcHXL77-LoiwRx50ZzU8QU&security=reality&sni=tradingview.com&type=tcp",
+   "uri_hash": "sha256:18cd8673897c73c70f7ab71e9b3920ac483a809c2a36502d01f4505b474576fb"
+  },
+  {
+   "uri": "vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"152.67.218.38\",\"port\":\"443\",\"id\":\"b5e9480a-b7aa-40a4-f9a7-5299b5e363b4\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"\",\"tls\":\"\",\"path\":\"\\/\",\"host\":\"152.67.218.38\"}#%F0%9F%87%B0%F0%9F%87%B7KR_24%7C280KB%2Fs%7CM002-260618%2001",
+   "canonical": "opaque|vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"152.67.218.38\",\"port\":\"443\",\"id\":\"b5e9480a-b7aa-40a4-f9a7-5299b5e363b4\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"\",\"tls\":\"\",\"path\":\"\\/\",\"host\":\"152.67.218.38\"}#%F0%9F%87%B0%F0%9F%87%B7KR_24%7C280KB%2Fs%7CM002-260618%2001",
+   "uri_hash": "sha256:0745c38389d78650e4d916881d1bf88357a4eceea8d9407e30b76c5c5b44b1d4"
+  },
+  {
+   "uri": "vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"146.56.112.110\",\"port\":\"8888\",\"id\":\"e7c302f3-90d6-42dd-9d7d-94a3683a3707\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"raw\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%B0%F0%9F%87%B7KR_17%7C358KB%2Fs%7CC002-260622%2001",
+   "canonical": "opaque|vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"146.56.112.110\",\"port\":\"8888\",\"id\":\"e7c302f3-90d6-42dd-9d7d-94a3683a3707\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"raw\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%B0%F0%9F%87%B7KR_17%7C358KB%2Fs%7CC002-260622%2001",
+   "uri_hash": "sha256:ae46bafa59bf761ad91decdfb1f3c295c4a209dce0f49e40703bb69faf296a90"
+  },
+  {
+   "uri": "vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"165.154.195.38\",\"port\":\"35034\",\"id\":\"959a8caf-4cea-43d0-a548-3628e7ddfafc\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"tcp\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%B9%F0%9F%87%BCTW_12%7C244KB%2Fs%7CM002-260618%2001",
+   "canonical": "opaque|vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"165.154.195.38\",\"port\":\"35034\",\"id\":\"959a8caf-4cea-43d0-a548-3628e7ddfafc\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"tcp\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%B9%F0%9F%87%BCTW_12%7C244KB%2Fs%7CM002-260618%2001",
+   "uri_hash": "sha256:969e545144a1d7defe3c22d7809383b32d9ec17f302db83c6985e41c101343bc"
+  },
+  {
+   "uri": "vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"67.220.95.3\",\"port\":\"18000\",\"id\":\"f8c8dc3d-0d37-46b0-8b34-a7232882fcfe\",\"aid\":\"0\",\"scy\":\"aes-128-gcm\",\"net\":\"raw\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%BA%F0%9F%87%B8US_127%7C413KB%2Fs%7CC002-260622%2001",
+   "canonical": "opaque|vmess://{\"v\":\"2\",\"ps\":\"\",\"add\":\"67.220.95.3\",\"port\":\"18000\",\"id\":\"f8c8dc3d-0d37-46b0-8b34-a7232882fcfe\",\"aid\":\"0\",\"scy\":\"aes-128-gcm\",\"net\":\"raw\",\"type\":\"\",\"tls\":\"\"}#%F0%9F%87%BA%F0%9F%87%B8US_127%7C413KB%2Fs%7CC002-260622%2001",
+   "uri_hash": "sha256:79c93dc1382ed2f369c137c27994292a0aa1ebbb0f4d2a2081ee14b8c8be887d"
+  },
+  {
+   "uri": "﻿ss://YWVzLTI1Ni1jZmI6WG44aktkbURNMDBJZU8lIyQjZkpBTXRzRUFFVU9wSC9ZV1l0WXFERm5UMFNW@103.186.154.172:38388#%F0%9F%87%BB%F0%9F%87%B3VN%C2%B2_1%7C2.1MB%2Fs%7CGPT%E2%81%BA%7CGM%7CX%7CSucceed%2001",
+   "canonical": "ss://YWVzLTI1Ni1jZmI6WG44aktkbURNMDBJZU8lIyQjZkpBTXRzRUFFVU9wSC9ZV1l0WXFERm5UMFNW@103.186.154.172:38388",
+   "uri_hash": "sha256:3920da9a6809fcf00c50acc8196425f587f8921de2b3a80d8d5fdbc3bee58267"
+  },
+  {
+   "uri": "ss://YWVzLTEyOC1nY206c2hhZG93c29ja3M=@37.19.198.160:443#%F0%9F%87%BA%F0%9F%87%B8US_2%7C299KB%2Fs%2001",
+   "canonical": "ss://YWVzLTEyOC1nY206c2hhZG93c29ja3M=@37.19.198.160:443",
+   "uri_hash": "sha256:77f936d980cb049cbec21efb7064d8707cbe00c412164a42dab950c1cb6dafa1"
+  },
+  {
+   "uri": "ss://YWVzLTEyOC1nY206c2hhZG93c29ja3M=@37.19.198.244:443#%F0%9F%87%BA%F0%9F%87%B8US_269%7C247KB%2Fs%7CA004-260618%2001",
+   "canonical": "ss://YWVzLTEyOC1nY206c2hhZG93c29ja3M=@37.19.198.244:443",
+   "uri_hash": "sha256:8e3f87de95c68902e2483604795eab9888274b84528e1b47915db28f44fe9a8e"
+  },
+  {
+   "uri": "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTplRGZON1NPRFFjZUlPbUlBYnRKSnRL@198.98.53.130:443#%F0%9F%87%BA%F0%9F%87%B8US_349%7C149KB%2Fs%2001",
+   "canonical": "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTplRGZON1NPRFFjZUlPbUlBYnRKSnRL@198.98.53.130:443",
+   "uri_hash": "sha256:165c561573db7858092bfcd9c646cf13d68edbbb47cad967110a716974f172f9"
+  },
+  {
+   "uri": "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpvWklvQTY5UTh5aGNRVjhrYTNQYTNB@82.38.31.36:8080#%F0%9F%87%B3%F0%9F%87%B1NL_123%7C260KB%2Fs%7CS004-260618%2001",
+   "canonical": "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpvWklvQTY5UTh5aGNRVjhrYTNQYTNB@82.38.31.36:8080",
+   "uri_hash": "sha256:dcfbe2037430b71cfd86bed4ce6cd6d4e010bb8bb0d70192460753239ee7b395"
+  },
+  {
+   "uri": "trojan://Telegram_healer_config@www.speedtest.net:443?sni=BjSa2yGfiTzJtho8uCZE29Xf2M2Q9C.g3fIAjPF0erM9k3X6wW-YeGZl2.WORkERS.dev&type=ws&path=/tr/VQ1n6VuZtSQv0vvjjCG?ed=2560&alpn=http/1.1&fp=chrome#%F0%9F%87%AB%F0%9F%87%B7FR_597%7C210KB%2Fs%7CB007-260618%2001",
+   "canonical": "trojan://Telegram_healer_config@www.speedtest.net:443?alpn=http/1.1&fp=chrome&path=/tr/VQ1n6VuZtSQv0vvjjCG?ed=2560&sni=BjSa2yGfiTzJtho8uCZE29Xf2M2Q9C.g3fIAjPF0erM9k3X6wW-YeGZl2.WORkERS.dev&type=ws",
+   "uri_hash": "sha256:85f15937e84c118a430c1ac54c375b2505b67e654216edd292ae30451d2c06d1"
+  },
+  {
+   "uri": "trojan://87961f9d-bee1-4377-826b-e169e7891c4f@cf.0sm.com:443?sni=yks-dd9.pages.dev&type=ws&path=/?ed=2048&fp=chrome#%F0%9F%87%AB%F0%9F%87%B7FR_950%7C188KB%2Fs%7CV001-260618%2001",
+   "canonical": "trojan://87961f9d-bee1-4377-826b-e169e7891c4f@cf.0sm.com:443?fp=chrome&path=/?ed=2048&sni=yks-dd9.pages.dev&type=ws",
+   "uri_hash": "sha256:3415fa4030802eb791d75b61deeffa8006e054ea9eae5ea186e17d63fc54e3b8"
+  },
+  {
+   "uri": "trojan://bd85f5fe32d9446a8b1f59e4f710455b@104.24.163.206:443?sni=BpB-PAnEL-62c3.mlM-eE9A3b83.wOrKErS.dev&type=ws&path=/eyJqdW5rIjoibkN2cER2SDZIUTkiLCJwcm90b2NvbCI6InRyIiwibW9kZSI6IiIsInBhbmVsSVBzIjoiWzJhMDI6ODk4OjE0Njo2NDo6XSJ9?ed=2560&alpn=http/1.1&fp=chrome#%F0%9F%87%AB%F0%9F%87%B7FR_68%7C133KB%2Fs%2001",
+   "canonical": "trojan://bd85f5fe32d9446a8b1f59e4f710455b@104.24.163.206:443?alpn=http/1.1&fp=chrome&path=/eyJqdW5rIjoibkN2cER2SDZIUTkiLCJwcm90b2NvbCI6InRyIiwibW9kZSI6IiIsInBhbmVsSVBzIjoiWzJhMDI6ODk4OjE0Njo2NDo6XSJ9?ed=2560&sni=BpB-PAnEL-62c3.mlM-eE9A3b83.wOrKErS.dev&type=ws",
+   "uri_hash": "sha256:d2ac27dc4291e8bba018817c89d3a05b97e56fc14ff8291f638185eedadc757f"
+  },
+  {
+   "uri": "hysteria2://ew9_M93_6a31Qd45_hUX3984F_jNZ83x_Nz1l_f@94.20.88.13:8443?insecure=1&sni=azer-tea-grape.bumbleshrimp.com#%F0%9F%87%A6%F0%9F%87%BFAZ_1%7C121KB%2Fs%7CA004-260618%2001",
+   "canonical": "hysteria2://ew9_M93_6a31Qd45_hUX3984F_jNZ83x_Nz1l_f@94.20.88.13:8443?insecure=1&sni=azer-tea-grape.bumbleshrimp.com",
+   "uri_hash": "sha256:89d5b3cf09a62b52462af0df31201170401279b1ace5d34f8c53320f88cd93aa"
+  },
+  {
+   "uri": "hysteria2://H7mP2xY9kJ4nQ8wR5tF6vB3z@35.183.85.24:443?insecure=1&sni=35.183.85.24#%F0%9F%87%A8%F0%9F%87%A6CA_33%7C353KB%2Fs%7CC002-260622%2001",
+   "canonical": "hysteria2://H7mP2xY9kJ4nQ8wR5tF6vB3z@35.183.85.24:443?insecure=1&sni=35.183.85.24",
+   "uri_hash": "sha256:20d0babfaff379c5e659219e5dd3d913b9ba4c8c6eabd0777cfd7a6a7ecf3822"
+  },
+  {
+   "uri": "socks://T2c6@112.28.149.152:8443#%E7%BE%8E%E5%9B%BD%28yudou789.top%20%E7%8E%89%E8%B1%86%E5%85%8D%E8%B4%B9%E8%8A%82%E7%82%B9%29",
+   "canonical": "socks://T2c6@112.28.149.152:8443",
+   "uri_hash": "sha256:0950cdca20e8a6dd917ea3143487199bcbb6d86a13cd0a7235c2b437db7faa33"
+  },
+  {
+   "uri": "anytls://f93d0a97-c3a8-47af-b2be-ea4904c9918b@jjz.jjznodenode.top:17966?security=tls&insecure=0&allowInsecure=0&type=tcp&headerType=none#%E5%BE%B7%E5%9B%BD%28yudou789.top%20%E7%8E%89%E8%B1%86%E5%85%8D%E8%B4%B9%E8%8A%82%E7%82%B9%29",
+   "canonical": "anytls://f93d0a97-c3a8-47af-b2be-ea4904c9918b@jjz.jjznodenode.top:17966?allowInsecure=0&headerType=none&insecure=0&security=tls&type=tcp",
+   "uri_hash": "sha256:b32ee7e35869649b3c67988f9b5e16c6a6028045bbee08817667a3070c6da90e"
+  }
+ ]
+}
