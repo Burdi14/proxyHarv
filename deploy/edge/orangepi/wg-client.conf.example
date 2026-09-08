@@ -1,0 +1,17 @@
+# WireGuard client config for the Orange Pi (§9.1: Pi dials OUT to the VPS;
+# no NATS port is published to the internet).
+#
+# 1. generate keys on the Pi:  wg genkey | tee pi.key | wg pubkey > pi.pub
+# 2. put the Pi's public key into the server's wg0.conf peer section
+# 3. copy this file to /etc/wireguard/wg0.conf and fill PRIVATE_KEY + SERVER_*.
+#
+[Interface]
+PrivateKey = PASTE_PI_PRIVATE_KEY
+Address = 10.99.0.2/32
+DNS = 1.1.1.1
+
+[Peer]
+PublicKey = PASTE_SERVER_PUBLIC_KEY
+Endpoint = SERVER_PUBLIC_IP:51820
+AllowedIPs = 10.99.0.1/32
+PersistentKeepalive = 25

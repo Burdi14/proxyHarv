@@ -1,0 +1,28 @@
+[Unit]
+Description=proxyfarm validator (edge, RF vantage)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=proxyfarm
+Group=proxyfarm
+# keep the rootfs read-only; /tmp is enough for sing-box configs
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+WorkingDirectory=/var/lib/proxyfarm
+ExecStart=/usr/local/bin/proxyfarm-worker \
+  --role=validator \
+  --vantage=rf-home-1 \
+  --nats=nats://10.99.0.1:4222 \
+  --nats-creds=/etc/proxyfarm/validator.creds \
+  --singbox=/usr/local/bin/sing-box \
+  --curl=/usr/bin/curl \
+  --metrics-addr=:9101
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
