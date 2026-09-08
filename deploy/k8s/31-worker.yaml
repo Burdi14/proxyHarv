@@ -1,0 +1,86 @@
+# tester: KEDA-scaled by JetStream consumer lag (§10). min=max=2 is safe on
+# single-node k3s (§11.8) — raise max when adding nodes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: proxyfarm
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: worker}
+  template:
+    metadata:
+      labels: {app: worker}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: worker
+          image: ghcr.io/burdi14/proxyfarm/worker:latest
+          args:
+            - --role=tester
+            - --vantage=cloud-eu-1
+            - --nats=$(NATS_URL)
+            - --singbox=/usr/local/bin/sing-box
+            - --curl=/usr/local/bin/curl
+          env:
+            - name: NATS_URL
+              valueFrom: {configMapKeyRef: {name: proxyfarm-config, key: NATS_URL}}
+            - name: PROBE_DOMAIN
+              valueFrom: {configMapKeyRef: {name: proxyfarm-config, key: PROBE_DOMAIN}}
+          ports: [{containerPort: 9101, name: metrics}]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 200m, memory: 256Mi}
+            limits: {memory: 1Gi}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker
+  namespace: proxyfarm
+spec:
+  selector: {app: worker}
+  ports: [{port: 9101, name: metrics}]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: worker
+  namespace: proxyfarm
+  labels: {release: kube-prometheus-stack}
+spec:
+  selector:
+    matchLabels: {app: worker}
+  endpoints:
+    - {port: metrics, interval: 30s}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: worker-jobs
+  namespace: proxyfarm
+spec:
+  scaleTargetRef: {name: worker}
+  minReplicaCount: 2
+  maxReplicaCount: 2 # §11.8: keep equal until a second k8s node exists
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+    - type: natsjetstream
+      metadata:
+        natsServerMonitoringEndpoint: nats.proxyfarm.svc.cluster.local:8222
+        account: "$G"
+        stream: JOBS_L1
+        consumer: workers-l1
+        lagThreshold: "500"

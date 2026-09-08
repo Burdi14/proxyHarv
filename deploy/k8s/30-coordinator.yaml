@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coordinator
+  namespace: proxyfarm
+spec:
+  replicas: 1 # single writer; KV lease guards accidental duplicates
+  selector:
+    matchLabels: {app: coordinator}
+  template:
+    metadata:
+      labels: {app: coordinator}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: coordinator
+          image: ghcr.io/burdi14/proxyfarm/coordinator:latest
+          args:
+            - --nats=$(NATS_URL)
+            - --pg=$(PG_DSN)
+            - --plan-every=$(PLAN_EVERY)
+            - --publish-every=$(PUBLISH_EVERY)
+            - --score-weights=$(SCORE_WEIGHTS)
+          envFrom:
+            - configMapRef: {name: proxyfarm-config}
+            - secretRef: {name: proxyfarm-secrets}
+          ports: [{containerPort: 9102, name: metrics}]
+          readinessProbe:
+            httpGet: {path: /metrics, port: metrics}
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {memory: 512Mi}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coordinator
+  namespace: proxyfarm
+spec:
+  selector: {app: coordinator}
+  ports: [{port: 9102, name: metrics}]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: coordinator
+  namespace: proxyfarm
+  labels: {release: kube-prometheus-stack}
+spec:
+  selector:
+    matchLabels: {app: coordinator}
+  endpoints:
+    - {port: metrics, interval: 30s}

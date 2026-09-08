@@ -1,0 +1,58 @@
+# nats with JetStream; monitoring port for KEDA natsjetstream scaler.
+# NOT published outside the cluster — edge validators reach it over WireGuard.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats
+  namespace: proxyfarm
+spec:
+  serviceName: nats
+  replicas: 1
+  selector:
+    matchLabels: {app: nats}
+  template:
+    metadata:
+      labels: {app: nats}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: nats
+          image: nats:2.10-alpine
+          args: ["-js", "-sd", "/data", "-m", "8222"]
+          ports:
+            - {containerPort: 4222, name: clients}
+            - {containerPort: 8222, name: monitor}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+          readinessProbe:
+            httpGet: {path: /healthz, port: monitor}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {memory: 512Mi}
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 10Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats
+  namespace: proxyfarm
+spec:
+  clusterIP: None
+  selector: {app: nats}
+  ports:
+    - {port: 4222, name: clients}
+    - {port: 8222, name: monitor}

@@ -1,0 +1,47 @@
+# §10 monitoring: alerts for publish staleness, consumer lag, validator offline.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: proxyfarm-alerts
+  namespace: proxyfarm
+  labels: {release: kube-prometheus-stack}
+spec:
+  groups:
+    - name: proxyfarm
+      rules:
+        - alert: ProxyfarmPublicationStale
+          expr: (time() - proxyfarm_publish_timestamp) > 43200
+          for: 10m
+          labels: {severity: warning}
+          annotations:
+            summary: "publication older than 12h"
+            description: "No new list version for >12h — pipeline stalled."
+        - alert: ProxyfarmPublishMetricsMissing
+          expr: absent(proxyfarm_publish_timestamp)
+          for: 30m
+          labels: {severity: warning}
+          annotations:
+            summary: "coordinator metrics missing"
+        - alert: ProxyfarmValidatorOffline
+          expr: (sum(increase(proxyfarm_probe_requests_total{vantage=~"rf-.*"}[1h])) or on() vector(0)) == 0
+          for: 1h
+          labels: {severity: warning}
+          annotations:
+            summary: "rf validator silent"
+            description: "No probe results from any rf vantage for >1h (check REGISTRY heartbeats and WireGuard tunnel)."
+        - alert: ProxyfarmProbeErrorRateHigh
+          expr: |
+            sum by (vantage) (rate(proxyfarm_probe_requests_total{code!="ok"}[30m]))
+              /
+            sum by (vantage) (rate(proxyfarm_probe_requests_total[30m])) > 0.95
+          for: 1h
+          labels: {severity: info}
+          annotations:
+            summary: "probe error rate >95% on {{ $labels.vantage }}"
+        - alert: ProxyfarmConsumerLagHigh
+          expr: nats_consumer_num_pending{stream=~"JOBS_.*"} > 5000
+          for: 30m
+          labels: {severity: warning}
+          annotations:
+            summary: "JetStream consumer lag high"
+            description: "Scale testers (raise KEDA max) or check worker health."

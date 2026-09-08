@@ -1,0 +1,24 @@
+# Template — copy to secrets.yaml and fill real values; secrets.yaml is
+# git-ignored. In production prefer sealed-secrets (§9.7).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxyfarm-secrets
+  namespace: proxyfarm
+type: Opaque
+stringData:
+  ADMIN_TOKEN: "change-me"
+  PG_PASSWORD: "change-me"
+  PG_DSN: postgres://proxyfarm:REPLACE_PG_PASSWORD@postgres:5432/proxyfarm?sslmode=disable
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxyfarm-config
+  namespace: proxyfarm
+data:
+  NATS_URL: nats://nats:4222
+  PROBE_DOMAIN: ""            # probe.<your-domain> for generate_204
+  SCORE_WEIGHTS: "0.2,0.3,0.2,0.2,0.1"
+  PLAN_EVERY: 1m
+  PUBLISH_EVERY: 6h

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: proxyfarm
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres}
+  template:
+    metadata:
+      labels: {app: postgres}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          args: ["-c", "ssl=off"]
+          env:
+            - {name: POSTGRES_USER, value: proxyfarm}
+            - name: POSTGRES_PASSWORD
+              valueFrom: {secretKeyRef: {name: proxyfarm-secrets, key: PG_PASSWORD}}
+            - {name: POSTGRES_DB, value: proxyfarm}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+          ports: [{containerPort: 5432, name: pg}]
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+          readinessProbe:
+            exec: {command: ["pg_isready", "-U", "proxyfarm"]}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {memory: 1Gi}
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 10Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: proxyfarm
+spec:
+  clusterIP: None
+  selector: {app: postgres}
+  ports: [{port: 5432, name: pg}]

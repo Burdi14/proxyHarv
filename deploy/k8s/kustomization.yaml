@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: proxyfarm
+resources:
+  - 00-namespace.yaml
+  - 10-config.yaml
+  - 20-postgres.yaml
+  - 21-nats.yaml
+  - 30-coordinator.yaml
+  - 31-worker.yaml
+  - 32-api.yaml
+  - 40-cronjobs.yaml
+  - 41-backup.yaml
+  - 50-networkpolicy.yaml
+  - 60-ingress.yaml
+  - monitoring/prometheus-rules.yaml
+images:
+  - name: ghcr.io/burdi14/proxyfarm/coordinator
+    newTag: latest
+  - name: ghcr.io/burdi14/proxyfarm/worker
+    newTag: latest
+  - name: ghcr.io/burdi14/proxyfarm/api
+    newTag: latest
+  - name: ghcr.io/burdi14/proxyfarm/fetcher
+    newTag: latest

@@ -1,0 +1,77 @@
+# fetcher CronJob: sources live in the DB; runs every 30 minutes.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fetcher
+  namespace: proxyfarm
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: fetcher
+              image: ghcr.io/burdi14/proxyfarm/fetcher:latest
+              args:
+                - --once
+                - --nats=$(NATS_URL)
+                - --pg=$(PG_DSN)
+              envFrom:
+                - configMapRef: {name: proxyfarm-config}
+                - secretRef: {name: proxyfarm-secrets}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              resources:
+                requests: {cpu: 50m, memory: 64Mi}
+                limits: {memory: 256Mi}
+---
+# geoipupdate CronJob: refresh GeoLite2 mmdb (free license key, §6).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: geoipupdate
+  namespace: proxyfarm
+spec:
+  schedule: "17 3 * * 3" # weekly
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: geoipupdate
+              image: ghcr.io/maxmind/geoipupdate:v7.1.0
+              env:
+                - {name: GEOIPUPDATE_EDITION_IDS, value: "GeoLite2-City"}
+                - {name: GEOIPUPDATE_FREQUENCY, value: "0"}
+                - {name: GEOIPUPDATE_VERBOSE, value: "1"}
+                - name: GEOIPUPDATE_ACCOUNT_ID
+                  valueFrom: {secretKeyRef: {name: proxyfarm-secrets, key: GEOIP_ACCOUNT_ID}}
+                - name: GEOIPUPDATE_LICENSE_KEY
+                  valueFrom: {secretKeyRef: {name: proxyfarm-secrets, key: GEOIP_LICENSE_KEY}}
+              volumeMounts:
+                - {name: mmdb, mountPath: /usr/share/GeoIP}
+          volumes:
+            - name: mmdb
+              persistentVolumeClaim: {claimName: mmdb}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mmdb
+  namespace: proxyfarm
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 100Mi}}
